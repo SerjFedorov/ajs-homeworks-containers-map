@@ -1,25 +1,20 @@
-import Validator from '../app';
+import ErrorRepository, { errors } from '../app';
 
-describe('validator', () => {
-  test('Допустимы только латинские буквы, символы тире -, подчёркивания _ и цифры (0-9);', () => {
-    const validator = new Validator();
-    const str = 'hello%wu';
-    const expected = 'Допустимы только латинские буквы, символы тире -, подчёркивания _ и цифры (0-9);';
+describe('Check validateUsername', () => {
+  test.each(errors)(('Test case №%#: check error code %p and string: %p'),
+    (code, str) => {
+      const error = new ErrorRepository();
+      expect(error.translate(code)).toBe(str);
+    });
 
-    expect(validator.validateUsername(str)).toEqual(expected);
-  });
-  test('Имя не должно содержать подряд более трёх цифр, а также начинаться и заканчиваться цифрами, символами подчёркивания или тире.', () => {
-    const validator = new Validator();
-    const str = '-hbjkl111hghfuy_';
-    const expected = 'Имя не должно содержать подряд более трёх цифр, а также начинаться и заканчиваться цифрами, символами подчёркивания или тире.';
+  test.each(errors)(('Test case №%#: check error code %p and string: Unknown error'),
+    (code) => {
+      const error = new ErrorRepository();
+      expect(error.translate(code)).not.toBe('Unknown error');
+    });
 
-    expect(validator.validateUsername(str)).toEqual(expected);
-  });
-  test('Все условия выполнены', () => {
-    const validator = new Validator();
-    const str = 'true_us1-ername';
-    const expected = 'Все условия выполнены';
-
-    expect(validator.validateUsername(str)).toEqual(expected);
+  test('Test case: checking invalid code', () => {
+    const error = new ErrorRepository();
+    expect(error.translate(0)).toBe('Unknown error');
   });
 });
